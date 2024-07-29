@@ -11,77 +11,89 @@ from tkinter import ttk
 from tkinter import messagebox
 from poke_api import get_pokemon_info
 
+
 # Create the main window
 root = Tk()
 root.title("Pokemon Information")
-root.geometry('800x500')
-root.resizable(False,False)
-root.grid_columnconfigure(0, weight=1)
-root.grid_rowconfigure(1, weight=1)
+root.resizable(False, False)
 
-pkmnInfo = {}
 # TODO: Create the frames
-def btn_click():
-  pkmnName = ent_name.get()
-  global pkmnInfo 
-  pkmnInfo = get_pokemon_info(pkmnName)
-  if not pkmnInfo:
-    showError(pkmnName)
+frm_input = ttk.Frame(root)
+frm_input.grid(row=0, column =0, columnspan=2, pady=(20,10))
 
-frm_top = ttk.Frame(root)
-frm_top.grid(row=0,column=0, columnspan=2)  
+## frame for Info
+frm_info = ttk.LabelFrame(root, text="Info")
+frm_info.grid(row=1, column = 0, padx=(20,10), pady=(10,20), sticky=N)
 
-
-frm_btm_left = ttk.Frame(root)
-frm_btm_left.grid(row=1, column=0, sticky='ew')
-
-frm_btm_right = ttk.Frame(root)
-frm_btm_right.grid(row=1, column=1,padx=10 ,sticky='ew')
-
+## Frame for stats
+frm_stats = ttk.LabelFrame(root, text="Stats")
+frm_stats.grid(row=1, column = 1, padx=(10,20), pady=(10,20), sticky=N)
 
 # TODO: Populate the user input frame with widgets
+lbl_name = ttk.Label (frm_input, text="Pokemon Name:")
+lbl_name.grid(row=0, column=0, padx=(10,5), pady=10)
 
-pokemonName = ttk.Label(frm_top, text='Pokemon Name')
-pokemonName.grid(row=0,column=0,padx=10)
+enter_name =  ttk.Entry(frm_input)
+enter_name.insert(0, "Diglett")
+enter_name.grid(row=0, column=1)
 
-ent_name = ttk.Entry(frm_top)
-ent_name.grid(row=0,column=1)
+def handle_btn_get_info():
+    poke_name = enter_name.get().strip()
+    if poke_name == '': return 
+    poke_info = get_pokemon_info(poke_name)
+    if poke_info:
+        lbl_height_val['text'] = str(poke_info['height']) + 'm'
+        #DO FOR Weight
+        lbl_weight_val['text'] = str(poke_info['weight']) + 'kg'
+        types_list = [t['type']['name'].capitalize() for t in poke_info['types']]
 
-btn_get = ttk.Button(frm_top, text='Get Info',command=btn_click)
-btn_get.grid(row=0,column=2,padx=10)
+        #-----stats
+        lbl_type_val['text'] = ', '.join(types_list)
+        bar_hp['value'] = poke_info['stats'][0]['base_stat']
+        bar_attack['value'] = poke_info['stats'][1]['base_stat']
+        ##Finish the rest!!
+        #bar_defense
+        #bar_special_attack
+        #bar_special_defense
+        #bar_speed
+    else:
+        error_message = f'Unable to fetch information for {poke_name} from the PokeAPI'## finish this per requirements
+        messagebox.showinfo(title ='Error', message =  error_message, icon='error')
 
-pokemonInfo = ttk.Label(frm_btm_left,text='Info')
-pokemonInfo.grid(row=0,column=0)
+btn_get_info =ttk.Button(frm_input, text='Get Info', command=handle_btn_get_info)
+btn_get_info.grid(row=0,column=2)
 
-pokemonHeight = ttk.Label(frm_btm_left,text='Height:')
-pokemonHeight.grid(row=1,column=1)
-pokemonHeight_v = ttk.Label(frm_btm_left, text='Test')
-pokemonHeight_v.grid(row=1,column=2)
+#populate the info frame with widgets
+lbl_height= ttk.Label(frm_info, text="Height: ")
+lbl_height.grid(row=2, column=0)
+lbl_height_val = ttk.Label(frm_info, width =20)
+lbl_height_val.grid(row=2, column=1)
+                         
+## Do the same for Weight
+lbl_weight = ttk.Label(frm_info, text="Weight: ")
+lbl_weight.grid(row=3, column=0)
+lbl_weight_val = ttk.Label(frm_info, width=20)
+lbl_weight_val.grid(row=3,column=1)
 
-pokemonHeight = ttk.Label(frm_btm_left,text='Weight:')
-pokemonHeight.grid(row=2,column=1)
-pokemonHeight = ttk.Label(frm_btm_left,text='Type:')
-pokemonHeight.grid(row=3,column=1)
+lbl_type = ttk.Label(frm_info, text='Type: ')
+lbl_type.grid(row=4,column=0)
+lbl_type_val = ttk.Label(frm_info, width=20)
+lbl_type_val.grid(row=4, column=1)
 
-pokemonStats = ttk.Label(frm_btm_right,text='Stats')
-pokemonStats.grid(row=0,column=0)
-pokemonHP = ttk.Label(frm_btm_right, text='HP: ')
-pokemonHP.grid(row=1, column=1)
-pokemonAtk = ttk.Label(frm_btm_right, text='Attack: ')
-pokemonAtk.grid(row=2, column=1)
-pokemonDef = ttk.Label(frm_btm_right, text='Defense: ')
-pokemonDef.grid(row=3, column=1)
-pokemonSpA = ttk.Label(frm_btm_right, text='Special Attack: ')
-pokemonSpA.grid(row=4, column=1)
-pokemonSpD = ttk.Label(frm_btm_right, text='Special Defense: ')
-pokemonSpD.grid(row=5, column=1)
-pokemonSpeed = ttk.Label(frm_btm_right, text='Speed: ')
-pokemonSpeed.grid(row=6, column=1)
 
-# TODO: Define button click event handler function
+##Stats frame
+STAT_MAX_VALUE = 255.0
+PRG_BAR_LENGTH = 200
 
-def showError(name):
-  messagebox.showerror("Error", f"Unable to fetch information for {name} from the PokeAPI")
-  
+label_hp = ttk.Label(frm_stats, text = "HP:")
+label_hp.grid(row=0, column=0, padx=(10,5), pady=(10,5), sticky=E)
+bar_hp = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_hp.grid(row=0, column=1, padx=(0,10), pady=(10,5))
+
+lbl_attack = ttk.Label(frm_stats, text="Attack:")
+lbl_attack.grid(row=1, column=0, padx=(10,5), pady=5, sticky=E)
+bar_attack = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_attack.grid(row=1, column=1, padx=(0,10), pady=5)
+## Do the same for Defense, Special attack, Special Defense
 
 root.mainloop()
