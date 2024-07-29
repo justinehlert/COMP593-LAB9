@@ -53,9 +53,13 @@ def handle_btn_get_info():
         bar_attack['value'] = poke_info['stats'][1]['base_stat']
         ##Finish the rest!!
         #bar_defense
+        bar_defense['value'] = poke_info['stats'][2]['base_stat']
         #bar_special_attack
+        bar_special_attack['value'] = poke_info['stats'][3]['base_stat']
         #bar_special_defense
+        bar_special_defense['value'] = poke_info['stats'][4]['base_stat']
         #bar_speed
+        bar_speed['value'] = poke_info['stats'][5]['base_stat']
     else:
         error_message = f'Unable to fetch information for {poke_name} from the PokeAPI'## finish this per requirements
         messagebox.showinfo(title ='Error', message =  error_message, icon='error')
@@ -95,5 +99,25 @@ lbl_attack.grid(row=1, column=0, padx=(10,5), pady=5, sticky=E)
 bar_attack = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
 bar_attack.grid(row=1, column=1, padx=(0,10), pady=5)
 ## Do the same for Defense, Special attack, Special Defense
+
+lbl_defense = ttk.Label(frm_stats, text="Defense:")
+lbl_defense.grid(row=2, column=0, padx=(10,5), pady=5, sticky=E)
+bar_defense = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_defense.grid(row=2, column=1, padx=(0,10), pady=5)
+
+lbl_special_attack = ttk.Label(frm_stats, text="Special Attack:")
+lbl_special_attack.grid(row=3, column=0, padx=(10,5), pady=5)
+bar_special_attack = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_special_attack.grid(row=3, column=1, padx=(0,10), pady=5)
+
+lbl_special_defense = ttk.Label(frm_stats, text="Special Defense:")
+lbl_special_defense.grid(row=4, column=0, padx=(10,5), pady=5, sticky=E)
+bar_special_defense = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_special_defense.grid(row=4, column=1, padx=(0,10), pady=5)
+
+lbl_speed = ttk.Label(frm_stats, text="Speed:")
+lbl_speed.grid(row=5, column=0, padx=(10,5), pady=5, sticky=E)
+bar_speed = ttk.Progressbar(frm_stats, length=PRG_BAR_LENGTH, maximum=STAT_MAX_VALUE)
+bar_speed.grid(row=5, column=1, padx=(0,10), pady=5)
 
 root.mainloop()
